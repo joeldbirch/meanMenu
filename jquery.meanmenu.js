@@ -45,7 +45,8 @@
             meanContract: "-", // single character you want to represent the contract for ULs
             meanRemoveAttrs: false, // true to remove classes and IDs, false to keep them
             onePage: false, // set to true for one page sites
-            removeElements: "" // set to hide page elements
+            removeElements: "", // set to hide page elements
+            meanNavHtml: '<a href="#nav" class="meanmenu-reveal">Show Navigation</a>'
         };
         var options = $.extend(defaults, options);
         
@@ -73,6 +74,7 @@
             var meanRemoveAttrs = options.meanRemoveAttrs;
             var onePage = options.onePage;
             var removeElements = options.removeElements;
+            var meanNavHtml = options.meanNavHtml;
                         
             //detect known mobile/tablet usage
             if ( (navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i)) || (navigator.userAgent.match(/iPad/i)) || (navigator.userAgent.match(/Android/i)) || (navigator.userAgent.match(/Blackberry/i)) || (navigator.userAgent.match(/Windows Phone/i)) ) {
@@ -102,19 +104,23 @@
             
             var menuOn = false;
             var meanMenuExist = false;
-            
-            if (meanRevealPosition == "right") {
-                meanRevealPos = "right:" + meanRevealPositionDistance + ";left:auto;";
-            }
-            if (meanRevealPosition == "left") {
-                var meanRevealPos = "left:" + meanRevealPositionDistance + ";right:auto;";
-            } 
+
             // run center function	
             meanCentered();
             
             // set all styles for mean-reveal
-            var meanStyles = "background:"+meanRevealColour+";color:"+meanRevealColour+";"+meanRevealPos;
-			var $navreveal = "";
+            var meanStyles = {
+                background: meanRevealColour,
+                color: meanRevealColour
+            }
+
+            if (meanRevealPosition == 'right' || meanRevealPosition == 'left' ) {
+                var resetPosition = (meanRevealPosition == 'right') ? 'left' : 'right';
+                meanStyles[meanRevealPosition] = meanRevealPositionDistance;
+                meanStyles[resetPosition] = 'auto';
+            }
+
+            var $navreveal = "";
 			
             function meanInner() {
                 // get last class name
@@ -142,7 +148,7 @@
                 	meanMenuExist = true;
                 	// add class to body so we don't need to worry about media queries here, all CSS is wrapped in '.mean-container'
                 	jQuery(meanContainer).addClass("mean-container");
-                	jQuery('.mean-container').prepend('<div class="mean-bar"><a href="#nav" class="meanmenu-reveal" style="'+meanStyles+'">Show Navigation</a><nav class="mean-nav"></nav></div>');
+                    jQuery('.mean-container').append('<div class="mean-bar">'+meanNavHtml+'<nav class="mean-nav"></nav></div>');
                     
                     //push meanMenu navigation into .mean-nav
                     var meanMenuContents = jQuery(meanMenu).html();
